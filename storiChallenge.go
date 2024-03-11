@@ -41,3 +41,14 @@ func readTransactions(filePath string) ([]Transaction, error) {
 	}
 	return transactions, scanner.Err()
 }
+
+func summarizeTransactions(transactions []Transaction) (debitTotal float64, creditTotal float64) {
+	for _, t := range transactions {
+		if t.Amount < 0 {
+			debitTotal += t.Amount
+		} else {
+			creditTotal += t.Amount
+		}
+	}
+	return debitTotal, creditTotal
+}
