@@ -19,7 +19,7 @@ func TestReadTransactions(t *testing.T) {
 		}
 	}(testFileName)
 
-	transactions, _ := readTransactions(testFileName)
+	transactions, _ := ReadTransactions(testFileName)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -34,7 +34,7 @@ func TestSummarizeTransactions(t *testing.T) {
 		{ID: "2", Date: "11-23", Amount: -50.25},
 		{ID: "3", Date: "5-25", Amount: 25},
 	}
-	debitTotal, creditTotal := summarizeTransactions(transactions)
+	debitTotal, creditTotal := SummarizeTransactions(transactions)
 	if debitTotal != -50.25 || creditTotal != 125.25 {
 		t.Errorf("Expected debitTotal = 50.25 and creditTotal = 125.25, got debitTotal = %.2f and creditTotal = %.2f", debitTotal, creditTotal)
 	}
