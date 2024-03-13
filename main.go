@@ -16,10 +16,10 @@ func main() {
 	debitTotal, creditTotal := storiChallenge.SummarizeTransactions(transactions)
 	fmt.Printf("Total Debit: %.2f, Total Credit: %.2f\n", debitTotal, creditTotal)
 
-	//subject := "Transaction Summary"
-	//body := fmt.Sprintf("Transaction summary:\nTotal Debit: %.2f\nTotal Credit: %.2f", debitTotal, creditTotal)
-	//err = sendEmail(subject, body)
-	//if err != nil {
-	//	fmt.Println("Error sending email:", err)
-	//}
+	subject := "Transaction Summary"
+	body := fmt.Sprintf("Transaction summary:\nTotal Debit: %.2f\nTotal Credit: %.2f", debitTotal, creditTotal)
+	err = storiChallenge.SendEmail(subject, body)
+	if err != nil {
+		fmt.Println("Error sending email:", err)
+	}
 }

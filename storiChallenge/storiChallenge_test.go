@@ -7,7 +7,7 @@ import (
 
 func TestReadTransactions(t *testing.T) {
 	testFileName := "test_transactions.csv"
-	testData := "1,7/15,100.75\n2,1-20,-50.50\n3,10-2,25"
+	testData := "1,7/15,+100.75\n2,1-20,-50.50\n3,10-2,+25"
 	err := os.WriteFile(testFileName, []byte(testData), 0644)
 	if err != nil {
 		t.Fatalf("Error writing test file: %v", err)

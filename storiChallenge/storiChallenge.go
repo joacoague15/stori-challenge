@@ -2,6 +2,8 @@ package storiChallenge
 
 import (
 	"encoding/csv"
+	"io"
+	"net/smtp"
 	"os"
 	"strconv"
 )
@@ -26,10 +28,10 @@ func ReadTransactions(filePath string) ([]Transaction, error) {
 	for {
 		record, err := reader.Read()
 		if err != nil {
-			if err.Error() == "EOF" {
+			if err == io.EOF {
 				break
 			}
-			continue
+			continue // Skip over any other errors
 		}
 
 		// Skip the incomplete transactions
@@ -37,8 +39,14 @@ func ReadTransactions(filePath string) ([]Transaction, error) {
 			continue
 		}
 
-		// Skip records with invalid debit or credit amounts
-		amount, err := strconv.ParseFloat(record[2], 64)
+		amountStr := record[2]
+		// Ensure the amount starts with a valid sign and is not empty
+		if amountStr == "" || (amountStr[0] != '+' && amountStr[0] != '-') {
+			continue
+		}
+
+		// Parse the amount string to a float64
+		amount, err := strconv.ParseFloat(amountStr, 64)
 		if err != nil {
 			continue
 		}
@@ -64,20 +72,20 @@ func SummarizeTransactions(transactions []Transaction) (debitTotal float64, cred
 	return debitTotal, creditTotal
 }
 
-//func sendEmail(subject, body string) error {
-//	from := "your-email@example.com"
-//	pass := "yourpassword"
-//	to := "recipient@example.com"
-//	smtpHost := "smtp.example.com"
-//	smtpPort := "587"
-//
-//	auth := smtp.PlainAuth("", from, pass, smtpHost)
-//
-//	message := []byte("To: " + to + "\r\n" +
-//		"Subject: " + subject + "\r\n\r\n" +
-//		body)
-//
-//	addr := smtpHost + ":" + smtpPort
-//	err := smtp.SendMail(addr, auth, from, []string{to}, message)
-//	return err
-//}
+func SendEmail(subject, body string) error {
+	from := "storichallenge7@gmail.com"
+	pass := "yybhkcalxermxdky"
+	to := "storichallenge7@gmail.com"
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	auth := smtp.PlainAuth("", from, pass, smtpHost)
+
+	message := []byte("To: " + to + "\r\n" +
+		"Subject: " + subject + "\r\n\r\n" +
+		body)
+
+	addr := smtpHost + ":" + smtpPort
+	err := smtp.SendMail(addr, auth, from, []string{to}, message)
+	return err
+}
