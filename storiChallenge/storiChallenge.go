@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Transaction struct {
@@ -61,17 +62,6 @@ func ReadTransactions(filePath string) ([]Transaction, error) {
 	}
 
 	return transactions, nil
-}
-
-func SummarizeTransactions(transactions []Transaction) (debitTotal float64, creditTotal float64) {
-	for _, t := range transactions {
-		if t.Amount < 0 {
-			debitTotal += t.Amount
-		} else {
-			creditTotal += t.Amount
-		}
-	}
-	return debitTotal, creditTotal
 }
 
 func SendEmail(subject, bodyHTML string) error {
@@ -152,4 +142,16 @@ func TransactionsByMonth(transactions []Transaction) map[int][]Transaction {
 	}
 
 	return transactionsByMonth
+}
+
+func PrepareMonthlyTransactionsCountDisplay(transactionsByMonth map[int][]Transaction) string {
+	var sb strings.Builder
+
+	for month, transactions := range transactionsByMonth {
+		monthName := time.Month(month).String() // Convert month number to name
+		transactionCount := len(transactions)
+		sb.WriteString(fmt.Sprintf("<p>Number of transactions in %s: %d</p>", monthName, transactionCount))
+	}
+
+	return sb.String()
 }

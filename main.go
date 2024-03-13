@@ -13,24 +13,26 @@ func main() {
 		return
 	}
 
-	debitTotal, creditTotal := storiChallenge.SummarizeTransactions(transactions)
-	fmt.Printf("Total Debit: %.2f, Total Credit: %.2f\n", debitTotal, creditTotal)
+	totalBalance := storiChallenge.TotalBalance(transactions)
+	averageDebit, averageCredit := storiChallenge.AverageDebitAndCredit(transactions)
+
+	transactionsByMonth := storiChallenge.TransactionsByMonth(transactions)
+	monthlyTransactionsContent := storiChallenge.PrepareMonthlyTransactionsCountDisplay(transactionsByMonth)
 
 	subject := "Transaction Summary"
 
-	bodyHTML := `
+	bodyHTML := fmt.Sprintf(`
 		<html>
 			<body>
 				<h1>Transaction Summary</h1>
-				<p>Total balance is: <strong>$39.74</strong></p>
-				<p>Number of transactions in July: <strong>2</strong></p>
-				<p>Number of transactions in August: <strong>2</strong></p>
-				<p>Average debit amount: <strong>-$15.38</strong></p>
-				<p>Average credit amount: <strong>$35.25</strong></p>
+				<p>Total balance is: <strong>$%.2f</strong></p>
+				<p>Average debit amount: <strong>$%.2f</strong></p>
+				<p>Average credit amount: <strong>$%.2f</strong></p>
+				%s
 				<img width="200" height="200" src="https://yt3.googleusercontent.com/rn71w21Rhir526-DhwaarxhBSHpsdltK1R4Ym4XYDb9wFSBQWRhUR_ATehcAQYjsaoPFl_Hn2g=s900-c-k-c0x00ffffff-no-rj" />
 			</body>
 		</html>
-	`
+	`, totalBalance, averageDebit, averageCredit, monthlyTransactionsContent)
 
 	err = storiChallenge.SendEmail(subject, bodyHTML)
 	if err != nil {

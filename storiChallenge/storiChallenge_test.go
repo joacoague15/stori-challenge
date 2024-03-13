@@ -28,18 +28,6 @@ func TestReadTransactions(t *testing.T) {
 	}
 }
 
-func TestSummarizeTransactions(t *testing.T) {
-	transactions := []Transaction{
-		{ID: "1", Date: "1/1", Amount: 100.25},
-		{ID: "2", Date: "11/23", Amount: 50.25},
-		{ID: "3", Date: "5/25", Amount: 25},
-	}
-	debitTotal, creditTotal := SummarizeTransactions(transactions)
-	if debitTotal != -50.25 || creditTotal != 125.25 {
-		t.Errorf("Expected debitTotal = 50.25 and creditTotal = 125.25, got debitTotal = %.2f and creditTotal = %.2f", debitTotal, creditTotal)
-	}
-}
-
 func TestTotalBalance(t *testing.T) {
 	transactions := []Transaction{
 		{ID: "1", Date: "1/1", Amount: 100.25},
