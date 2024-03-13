@@ -1,7 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3" // Import for side effects
+	"log"
 	"storiChallenge/storiChallenge"
 )
 
@@ -37,5 +40,51 @@ func main() {
 	err = storiChallenge.SendEmail(subject, bodyHTML)
 	if err != nil {
 		fmt.Println("Error sending email:", err)
+	}
+
+	// Creating the local DB
+	db, err := sql.Open("sqlite3", "./database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Create the transaction table
+	sqlStmt := `
+		CREATE TABLE IF NOT EXISTS transactions (
+		id INTEGER PRIMARY KEY,
+		date TEXT,
+		amount REAL
+	);`
+	_, err = db.Exec(sqlStmt)
+	if err != nil {
+		log.Fatalf("%q: %s\n", err, sqlStmt)
+	}
+
+	// Add the new transactions into the db
+	tr, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stmt, err := tr.Prepare("INSERT INTO transactions (id, date, amount) VALUES (?, ?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	for _, txn := range transactions {
+		_, err = stmt.Exec(txn.ID, txn.Date, txn.Amount)
+		if err != nil {
+			// If an error occurs, rollback the transaction
+			tr.Rollback()
+			log.Fatal(err)
+		}
+	}
+
+	// If everything went well, commit the transaction
+	err = tr.Commit()
+	if err != nil {
+		log.Fatal(err)
 	}
 }
