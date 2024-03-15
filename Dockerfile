@@ -3,8 +3,10 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=1 GOOS=linux go build -v -o server
+RUN CGO_ENABLED=1 GOOS=linux go build -v -o storiapp
 
 FROM debian:buster-slim
-COPY --from=builder /app/server /server
-CMD ["/server"]
+WORKDIR /app
+COPY --from=builder /app/storiapp /app/storiapp
+COPY test1.csv /app/test1.csv
+CMD ["./storiapp"]
