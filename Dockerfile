@@ -5,7 +5,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=1 GOOS=linux go build -v -o storiapp
 
-FROM debian:buster-slim
+FROM golang:1.19
 WORKDIR /app
 COPY --from=builder /app/storiapp /app/storiapp
 COPY test1.csv /app/test1.csv
